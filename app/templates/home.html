@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %} Home{% endblock %}
+{% block content %}
+<h2>Welcome!</h2>
+{% if user.is_authenticated %}
+<p>Hi {{ user.username }}!</p>
+<a href="/signout" class="btn btn-danger">Logout</a>
+
+<!-- Display products here -->
+<table class="table">
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Name</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody id="productsTableBody">
+    </tbody>
+  </table>
+  
+  <script>
+      // Make a GET request to your API endpoint
+      fetch('/get-products/')
+          .then(response => response.json()) // Parse the JSON response
+          .then(data => {
+              // Handle the response data
+              const productsTableBody = document.getElementById('productsTableBody');
+  
+              data.forEach(product => {
+                  const row = document.createElement('tr');
+                  
+                  const skuCell = document.createElement('td');
+                  skuCell.textContent = product.sku; // Ensure product.SKU is used
+                  row.appendChild(skuCell);
+  
+                  const nameCell = document.createElement('td');
+                  nameCell.textContent = product.name;
+                  row.appendChild(nameCell);
+  
+                  const categoryCell = document.createElement('td');
+                  categoryCell.textContent = product.category;
+                  row.appendChild(categoryCell);
+  
+                  productsTableBody.appendChild(row);
+              });
+          })
+          .catch(error => {
+              // Handle errors
+              console.error('Error fetching products:', error);
+          });
+  </script>
+
+{% else %}
+<a href="/signin" class="btn btn-primary"><span class="glyphicon glyphicon-log-in"></span>Login</a>
+<a href="/signup" class="btn btn-success">Signup</a>
+{% endif %}
+{% endblock %}
